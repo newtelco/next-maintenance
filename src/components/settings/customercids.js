@@ -407,7 +407,7 @@ const CustomerCIDs = () => {
 CustomerCIDs.getInitialProps = async ({ req }) => {
   const host = req && (req.headers["x-forwarded-host"] ?? req.headers["host"])
   let protocol = "https:"
-  if (host.indexOf("localhost") > -1) {
+  if (host.includes("localhost")) {
     protocol = "http:"
   }
   const pageRequest = `${protocol}//${host}/api/settings/theircids`

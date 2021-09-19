@@ -12,6 +12,8 @@ const SentryWebpackPluginOptions = {
   // https://github.com/getsentry/sentry-webpack-plugin#options.
 }
 
+const isDev = process.env.NODE_ENV === "development"
+
 /**
  * @type {import('next').NextConfig}
  */
@@ -46,6 +48,17 @@ const nextConfig = {
     )
 
     return config
+  },
+  async rewrites() {
+    return isDev
+      ? [
+          {
+            source: "/v1/:path*",
+            destination: "https://maintenance.newtelco.de/v1/:path*",
+            basePath: false,
+          },
+        ]
+      : []
   },
 }
 

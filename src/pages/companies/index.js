@@ -273,7 +273,7 @@ const Companies = ({ session, suppliers, company }) => {
 export async function getServerSideProps({ req, query }) {
   const host = req && (req.headers["x-forwarded-host"] ?? req.headers["host"])
   let protocol = "https:"
-  if (host.indexOf("localhost") > -1) {
+  if (host.includes("localhost")) {
     protocol = "http:"
   }
   const res2 = await fetch(`${protocol}//${host}/api/companies?select=true`)

@@ -2146,7 +2146,7 @@ const Maintenance = ({ session, serverData, suppliers }) => {
 export async function getServerSideProps({ req, query }) {
   const host = req && (req.headers["x-forwarded-host"] ?? req.headers["host"])
   let protocol = "https:"
-  if (host.indexOf("localhost") > -1) {
+  if (host.includes("localhost")) {
     protocol = "http:"
   }
   const companiesResponse = await fetch(
