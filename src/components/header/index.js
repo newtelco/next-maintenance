@@ -1,5 +1,5 @@
 import { forwardRef } from "react"
-import { useSession } from "next-auth/client"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import useStore from "../store"
 import SearchInput from "./search"
@@ -21,7 +21,8 @@ const NavLink = (props) => (
 )
 
 const MaintHeader = () => {
-  const [session, loading] = useSession()
+  const { data: session, status } = useSession()
+  const loading = status === "loading"
   const count = useStore((state) => state.count)
 
   let avatarPath

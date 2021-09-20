@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://doadmin:p4yrgjbtl9gcrl5h@nt-psql-1-do-user-6985817-0.b.db.ondigitalocean.com:25060/maintenance_dev?schema=maint_dev&sslmode=require"
 }
 
 model Changelog {
@@ -48,7 +48,7 @@ model Freeze {
   company       Company  @relation(fields: [companyid], references: [id])
   startdatetime DateTime @db.Timestamptz(6)
   enddatetime   DateTime @db.Timestamptz(6)
-  notes         String?  
+  notes         String?
   @@map("freeze")
 }
 
@@ -97,7 +97,7 @@ model Maintenance {
   impact              String?          @db.VarChar(256)
   location            String?          @db.VarChar(256)
   maintnote           String?          @db.VarChar(512)
-  notes               String?   
+  notes               String?
   mailsentat          DateTime?        @db.Timestamptz(6)
   done                Boolean          @default(false)
   inbearbeitung       Boolean          @default(false)
@@ -108,7 +108,7 @@ model Maintenance {
   emergency           Boolean          @default(false)
   betroffenekunden    String?          @db.VarChar(1024)
   betroffenecids      String?          @db.VarChar(1024)
-  mailbody            String?   
+  mailbody            String?
   calendarid          String?         @db.VarChar(256)
   rescheduled         Int             @default(0)
   reschedules         Reschedule[]

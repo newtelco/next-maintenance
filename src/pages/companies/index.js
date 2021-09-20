@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react"
-import { getSession } from "next-auth/client"
+import { getSession } from "next-auth/react"
 import { AgGridReact } from "ag-grid-react"
 import moment from "moment-timezone"
 import Layout from "@/newtelco/layout"
@@ -276,12 +276,12 @@ export async function getServerSideProps({ req, query }) {
   if (host.includes("localhost")) {
     protocol = "http:"
   }
-  const res2 = await fetch(`${protocol}//${host}/api/companies?select=true`)
-  const suppliers = await res2.json()
+  const res = await fetch(`${protocol}//${host}/api/companies?select=true`)
+  const suppliers = await res.json()
   return {
     props: {
       session: await getSession({ req }),
-      company: query?.company || "",
+      company: query?.company ?? "",
       suppliers,
     },
   }

@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect, useRef } from "react"
-import { getSession } from "next-auth/client"
+import { getSession } from "next-auth/react"
 import Head from "next/head"
 import dynamic from "next/dynamic"
 import Router, { useRouter } from "next/router"
@@ -25,7 +25,7 @@ import moment from "moment-timezone"
 import debounce from "just-debounce-it"
 import Flatpickr from "react-flatpickr"
 import { AgGridReact } from "ag-grid-react"
-import { Formik, FastField, Field, useFormikContext } from "formik"
+import { Formik, Field, useFormikContext } from "formik"
 import { format, isValid, formatDistance, parseISO } from "date-fns"
 
 import "ag-grid-community/dist/styles/ag-grid.css"
@@ -103,16 +103,22 @@ const MyDateTime = ({ field, form, ...props }) => {
       disabled={props.maintId === "NEW"}
       data-enable-time
       onChange={(option) => {
-        const rawValue = moment(option[0])
-          .format("YYYY-MM-DD HH:mm:ss")
-          .toString()
-        form.setFieldValue(field.name, rawValue)
-        let startDateTime = new Date(form.values.startDateTime).toISOString()
-        let endDateTime = new Date(form.values.endDateTime).toISOString()
-        if (field.name === "startDateTime") {
-          startDateTime = new Date(option[0]).toISOString()
-        } else if (field.name === "endDateTime") {
-          endDateTime = new Date(option[0]).toISOString()
+        console.log(form.values)
+        const rawValue = moment.tz(option[0], form.values.timezone)
+        form.setFieldValue(
+          field.name,
+          rawValue.format("YYYY-MM-DD HH:mm:ss").toString()
+          // rawValue.toISOString()
+        )
+        //         const UTC = rawValue.clone().tz("GMT")
+        //
+        //         console.log(rawValue.format(), UTC.format())
+        let startDateTime = new Date(form.values.startdatetime) //.toISOString()
+        let endDateTime = new Date(form.values.enddatetime) //.toISOString()
+        if (field.name === "startdatetime") {
+          startDateTime = new Date(rawValue.toISOString())
+        } else if (field.name === "enddatetime") {
+          endDateTime = new Date(rawValue.toISOString())
         }
         if (
           startDateTime &&
@@ -120,10 +126,8 @@ const MyDateTime = ({ field, form, ...props }) => {
           isValid(parseISO(startDateTime)) &&
           isValid(parseISO(endDateTime))
         ) {
-          const impactCalculation = formatDistance(
-            parseISO(endDateTime),
-            parseISO(startDateTime)
-          )
+          const impactCalculation = formatDistance(startDateTime, endDateTime)
+          console.log("impact", impactCalculation)
           props.setImpactPlaceholder(impactCalculation)
         }
       }}
@@ -259,7 +263,7 @@ const Maintenance = ({ session, serverData, suppliers }) => {
   const [mailPreviewSubject, setMailPreviewSubject] = useState("")
   const [customerCids, setCustomerCids] = useState([])
   const [supplierCids, setSupplierCids] = useState([])
-  const [impactPlaceholder, setImpactPlaceholder] = useState([])
+  const [impactPlaceholder, setImpactPlaceholder] = useState("")
   const [sentProgress, setSentProgress] = useState(0)
   const [activeTab, setActiveTab] = useState("customer")
   const [maintHistory, setMaintHistory] = useState({
@@ -1107,7 +1111,7 @@ const Maintenance = ({ session, serverData, suppliers }) => {
         }
         setMaintenance(newMaint)
         const newLocation = `/maintenance?id=${data.id}`
-        router.push(newLocation, newLocation, { shallow: false })
+        router.push(newLocation)
 
         if (data.id) {
           Notify("success", "Create Success")
@@ -1560,11 +1564,19 @@ const Maintenance = ({ session, serverData, suppliers }) => {
                     }}
                     onSubmit={async (values, formikHelpers) => {
                       const diff = objDiff(maintHistory, values)
+                      // Save initial values for next comparison
                       setMaintHistory(values)
+                      setMaintenance({
+                        ...maintenance,
+                        ...values,
+                      })
+                      // Check if supplier cids have been selected, but no matching customer
+                      // cid has yet been loaded
                       if (values.suppliercids && !customerCids.length) {
                         fetchCustomerCids(values.suppliercids)
                       }
                       if (Object.keys(diff).length) {
+                        // If there is in fact a difference
                         if (maintenance.id === "NEW") {
                           Notify(
                             "error",
@@ -1670,7 +1682,7 @@ const Maintenance = ({ session, serverData, suppliers }) => {
                                 Maintenance ID in Suppliers System <br />
                                 For Documentation Purposes Only
                               </HelpBlock>
-                              <FastField
+                              <Field
                                 name="sendermaintenanceid"
                                 component={MyTextinput}
                                 maintId={maintenance.id}
@@ -1684,7 +1696,7 @@ const Maintenance = ({ session, serverData, suppliers }) => {
                               <ControlLabel htmlFor="supplier">
                                 Timezone
                               </ControlLabel>
-                              <FastField
+                              <Field
                                 name="timezone"
                                 component={TimezoneSelector}
                               />
@@ -1695,7 +1707,7 @@ const Maintenance = ({ session, serverData, suppliers }) => {
                               <ControlLabel htmlFor="supplier">
                                 Supplier
                               </ControlLabel>
-                              <FastField
+                              <Field
                                 name="supplier"
                                 component={SupplierSelector}
                               />
@@ -1706,7 +1718,7 @@ const Maintenance = ({ session, serverData, suppliers }) => {
                           <Col sm={12} xs={24}>
                             <FormGroup>
                               <ControlLabel
-                                htmlFor="start-datetime"
+                                htmlFor="startdatetime"
                                 style={{
                                   display: "flex",
                                   justifyContent: "space-between",
@@ -1715,7 +1727,7 @@ const Maintenance = ({ session, serverData, suppliers }) => {
                               >
                                 Start Date/Time
                               </ControlLabel>
-                              <FastField
+                              <Field
                                 name="startdatetime"
                                 startDateTime={values.startdatetime}
                                 endDateTime={values.enddatetime}
@@ -1742,7 +1754,7 @@ const Maintenance = ({ session, serverData, suppliers }) => {
                           <Col sm={12} xs={24}>
                             <FormGroup>
                               <ControlLabel
-                                htmlFor="end-datetime"
+                                htmlFor="enddatetime"
                                 style={{
                                   display: "flex",
                                   justifyContent: "space-between",
@@ -1751,7 +1763,7 @@ const Maintenance = ({ session, serverData, suppliers }) => {
                               >
                                 End Date/Time
                               </ControlLabel>
-                              <FastField
+                              <Field
                                 name="enddatetime"
                                 startDateTime={values.startdatetime}
                                 endDateTime={values.enddatetime}
@@ -1852,7 +1864,7 @@ const Maintenance = ({ session, serverData, suppliers }) => {
                                   </Whisper>
                                 </ButtonGroup>
                               </ControlLabel>
-                              <FastField
+                              <Field
                                 name="impact"
                                 component={MyTextinput}
                                 placeholder={impactPlaceholder}
@@ -1875,7 +1887,7 @@ const Maintenance = ({ session, serverData, suppliers }) => {
                               >
                                 Location
                               </ControlLabel>
-                              <FastField
+                              <Field
                                 name="location"
                                 component={MyTextinput}
                                 maintId={maintenance.id}
@@ -1889,7 +1901,7 @@ const Maintenance = ({ session, serverData, suppliers }) => {
                               <ControlLabel htmlFor="reason">
                                 Reason
                               </ControlLabel>
-                              <FastField
+                              <Field
                                 name="reason"
                                 component={MyTextarea}
                                 maintId={maintenance.id}
@@ -1913,7 +1925,7 @@ const Maintenance = ({ session, serverData, suppliers }) => {
                                   This note will be included in the mail
                                 </HelpBlock>
                               </ControlLabel>
-                              <FastField
+                              <Field
                                 name="maintnote"
                                 key="maintnote"
                                 component={MyTextarea}
@@ -2153,12 +2165,14 @@ export async function getServerSideProps({ req, query }) {
     `${protocol}//${host}/api/companies?select=true`
   )
   const suppliers = await companiesResponse.json()
+  const session = await getSession({ req })
+
   if (query.id === "NEW") {
     return {
       props: {
         serverData: query,
         suppliers,
-        session: await getSession({ req }),
+        session,
       },
     }
   } else {
@@ -2170,7 +2184,7 @@ export async function getServerSideProps({ req, query }) {
       props: {
         serverData,
         suppliers,
-        session: await getSession({ req }),
+        session,
       },
     }
   }

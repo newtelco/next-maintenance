@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { getSession } from "next-auth/client"
+import { getSession } from "next-auth/react"
 import Image from "next/image"
 import Layout from "@/newtelco/layout"
 import RequireLogin from "@/newtelco/require-login"

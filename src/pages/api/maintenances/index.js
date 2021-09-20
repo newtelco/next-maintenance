@@ -1,4 +1,6 @@
 import prisma from "../../../lib/prisma"
+// import { parseISO } from "date-fns"
+import moment from "moment-timezone"
 
 export default async function handle(req, res) {
   const { query, body, method } = req
@@ -127,8 +129,8 @@ export default async function handle(req, res) {
         sendermaintenanceid,
         done,
         emergency,
-        startdatetime,
-        enddatetime,
+        startdatetime: moment.tz(startdatetime, timezone).toISOString(),
+        enddatetime: moment.tz(enddatetime, timezone).toISOString(),
         impact,
         location,
         reason,

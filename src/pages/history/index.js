@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react"
-import { getSession } from "next-auth/client"
+import { getSession } from "next-auth/react"
 import "./history.css"
 import Layout from "@/newtelco/layout"
 import { AgGridReact } from "ag-grid-react"

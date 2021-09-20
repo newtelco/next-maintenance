@@ -1,9 +1,10 @@
-import { useSession } from "next-auth/client"
+import { useSession } from "next-auth/react"
 import { convertDateTime } from "@/newtelco/maintenance/helper"
 import { Avatar, FlexboxGrid, Dropdown, IconButton } from "rsuite"
 
 const Comment = ({ data, handleDelete }) => {
-  const [session, loading] = useSession()
+  const { data: session, status } = useSession()
+  const loading = status === "loading"
   const username = data.user.match(/^([^@]*)@/)[1]
 
   return (
