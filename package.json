@@ -12,7 +12,9 @@
     "prettier:fix": "prettier --write \"src/**/*.{js,jsx,json}\"",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "cy:ci": "cypress run --record"
+    "cy:ci": "cypress run --record",
+    "prisma:generate": "npx --no-install prisma generate",
+    "prisma:studio": "npx --no-install prisma studio"
   },
   "keywords": [
     "nextjs",
@@ -34,6 +36,7 @@
   "dependencies": {
     "@nivo/bar": "^0.73.1",
     "@nivo/calendar": "^0.73.0",
+    "@prisma/client": "^3.0.2",
     "@sentry/nextjs": "^6.10.0",
     "@tinymce/tinymce-react": "^3.6.0",
     "algolia-react-autocomplete": "^1.0.5",
@@ -51,8 +54,8 @@
     "logrocket": "^1.1.0",
     "logrocket-react": "^4.0.1",
     "moment-timezone": "^0.5.31",
-    "next": "^11.0.1",
-    "next-auth": "^3.27.3",
+    "next": "^11.1.2",
+    "next-auth": "^4.0.0-beta.2",
     "react": "^17.0.1",
     "react-apexcharts": "^1.3.7",
     "react-dom": "^17.0.1",
@@ -84,6 +87,7 @@
     "lint-staged": "^10.5.4",
     "mini-css-extract-plugin": "^2.2.0",
     "prettier": "^2.0.5",
+    "prisma": "^3.0.2",
     "rsuite": "^4.10.2",
     "simple-git-hooks": "^2.5.1"
   },
@@ -119,6 +123,7 @@
       "Uint8Array": "readonly",
       "Blob": "readonly",
       "exports": "writable",
+      "global": "writable",
       "console": "readonly"
     }
   },

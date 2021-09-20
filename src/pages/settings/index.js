@@ -1,5 +1,5 @@
 import React from "react"
-import { getSession } from "next-auth/client"
+import { getSession } from "next-auth/react"
 import Link from "next/link"
 import { withRouter } from "next/router"
 import RequireLogin from "@/newtelco/require-login"

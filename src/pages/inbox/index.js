@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { getSession } from "next-auth/client"
+import { getSession } from "next-auth/react"
 import Image from "next/image"
 import Layout from "@/newtelco/layout"
 import RequireLogin from "@/newtelco/require-login"
@@ -288,7 +288,7 @@ const Inbox = ({ session, inboxItems }) => {
 export async function getServerSideProps({ req }) {
   const host = req && (req.headers["x-forwarded-host"] ?? req.headers["host"])
   let protocol = "https:"
-  if (host.indexOf("localhost") > -1) {
+  if (host.includes("localhost")) {
     protocol = "http:"
   }
   const res = await fetch(`${protocol}//${host}/v1/api/inbox`)

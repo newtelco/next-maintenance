@@ -1,6 +1,6 @@
 import Router from "next/router"
 import dynamic from "next/dynamic"
-import { getSession } from "next-auth/client"
+import { getSession } from "next-auth/react"
 import { Loader, Panel, Icon } from "rsuite"
 import Layout from "@/newtelco/layout"
 import RequireLogin from "@/newtelco/require-login"
@@ -80,10 +80,10 @@ const Index = ({ session }) => {
   }
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps({ req }) {
   return {
     props: {
-      session: await getSession(context),
+      session: await getSession({ req }),
     },
   }
 }

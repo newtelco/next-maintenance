@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { Provider } from "next-auth/client"
+import { SessionProvider } from "next-auth/react"
 import Head from "next/head"
 import ErrorBoundary from "@/newtelco/errorboundary"
 const LogRocket = require("logrocket")
@@ -29,7 +29,7 @@ const App = ({ Component, pageProps }) => {
   }, [session])
 
   return (
-    <Provider session={pageProps.session}>
+    <SessionProvider session={session}>
       <ErrorBoundary>
         <Head>
           <title>Newtelco Maintenance</title>
@@ -74,7 +74,7 @@ const App = ({ Component, pageProps }) => {
         </Head>
         <Component {...pageProps} />
       </ErrorBoundary>
-    </Provider>
+    </SessionProvider>
   )
 }
 

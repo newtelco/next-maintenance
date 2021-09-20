@@ -1,5 +1,5 @@
 import Router from "next/router"
-import { getSession, providers, signin } from "next-auth/client"
+import { getSession, getProviders, signIn } from "next-auth/react"
 import { Container, FlexboxGrid, Panel, Content, Button, Col } from "rsuite"
 import "./signin.css"
 
@@ -51,7 +51,7 @@ const SignIn = ({ providers, session }) => {
                           id="signin-btn"
                           type="submit"
                           appearance="primary"
-                          onClick={() => signin(provider.id)}
+                          onClick={() => signIn(provider.id)}
                           block
                           style={{
                             display: "flex",
@@ -110,7 +110,7 @@ export default SignIn
 export async function getServerSideProps(ctx) {
   return {
     props: {
-      providers: await providers(ctx),
+      providers: await getProviders(),
       session: await getSession(ctx),
     },
   }
